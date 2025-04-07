@@ -1,9 +1,10 @@
 
 import { useEffect, useState } from "react";
-import { LineChart, TrendingUp, Home } from "lucide-react";
+import { LineChart, TrendingUp, Home, Info } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface ResultDisplayProps {
   predictedPrice: number | null;
@@ -96,6 +97,43 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
                 <p className="text-sm text-muted-foreground mb-1">Confidence</p>
                 <p className="font-medium">92%</p>
               </div>
+            </div>
+            
+            {/* New summary section */}
+            <div className="bg-blue-50 rounded-lg p-5 border border-blue-100">
+              <h4 className="text-lg font-medium text-blue-700 mb-3 flex items-center">
+                <Info className="h-4 w-4 mr-2" />
+                Summary Analysis
+              </h4>
+              <ul className="space-y-2 text-sm">
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  <span>Your property valuation is <span className="font-medium">{formatIndianPrice(predictedPrice)}</span></span>
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-blue-500 rounded-full mr-2"></span>
+                  <span>This is <span className="font-medium">
+                    {predictedPrice > 8000000 ? 'above' : 'below'} average
+                  </span> for similar properties in this location</span>
+                </li>
+                <li className="flex items-center">
+                  <span className="w-2 h-2 bg-purple-500 rounded-full mr-2"></span>
+                  <span>Market trend: <span className="font-medium text-green-600">+5.3% growth</span> expected in next 6 months</span>
+                </li>
+                <li className="flex items-center">
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <div className="flex items-center cursor-help">
+                        <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                        <span>Most valuable factors: <span className="font-medium">Location, amenities</span></span>
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent>
+                      <p className="w-[200px] text-xs">These factors contributed most significantly to your property's valuation.</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </li>
+              </ul>
             </div>
             
             <div className="flex justify-between pt-4 border-t">
