@@ -1,5 +1,5 @@
 
-interface PropertyDetails {
+export interface PropertyDetails {
   location: string;
   propertyType: string;
   area: number;
@@ -11,52 +11,48 @@ interface PropertyDetails {
   hasPowerBackup: boolean;
 }
 
-// This is a mock prediction function that simulates ML model predictions
-// In a real app, this would be replaced with actual API calls to a backend
+// Simple mock prediction function that calculates a property price
+// based on various factors (this would be replaced by an ML model in production)
 export const makePrediction = (details: PropertyDetails): number => {
-  // Base price per sq ft based on location
+  // Base price per sq ft based on location (in Hyderabad)
   const locationPrices: Record<string, number> = {
-    "Gachibowli": 7500,
-    "Hitech City": 8000,
-    "Kukatpally": 5500,
     "Banjara Hills": 12000,
-    "Madhapur": 7800,
-    "Kondapur": 6800,
-    "Miyapur": 5200,
-    "": 6000 // default
+    "Jubilee Hills": 13000,
+    "Gachibowli": 7000,
+    "Hitech City": 7500,
+    "Kukatpally": 5000,
+    "Madhapur": 8000,
+    "Kondapur": 6500,
+    "Miyapur": 4500,
   };
 
-  // Property type multipliers
-  const propertyTypeMultipliers: Record<string, number> = {
+  // Base price based on location and area
+  const basePrice = (locationPrices[details.location] || 5000) * details.area;
+
+  // Adjustments based on property type
+  const propertyTypeMultiplier: Record<string, number> = {
     "Apartment": 1.0,
     "Independent House": 1.2,
-    "Villa": 1.5,
-    "Penthouse": 1.8,
-    "": 1.0 // default
+    "Villa": 1.4,
+    "Penthouse": 1.6,
   };
 
-  // Base calculation
-  let basePrice = (locationPrices[details.location] || 6000) * details.area;
-  
-  // Apply property type multiplier
-  basePrice *= propertyTypeMultipliers[details.propertyType] || 1.0;
-  
-  // Adjustments for bedrooms and bathrooms
-  basePrice += (details.bedrooms * 200000);
-  basePrice += (details.bathrooms * 150000);
-  
-  // Adjustments for parking
-  basePrice += (details.parking * 300000);
-  
-  // Amenity adjustments
-  if (details.hasGarden) basePrice *= 1.1;
-  if (details.hasSecurity) basePrice *= 1.05;
-  if (details.hasPowerBackup) basePrice *= 1.03;
-  
-  // Add some randomness to make predictions feel more realistic
-  const randomFactor = 0.9 + Math.random() * 0.2; // Random factor between 0.9 and 1.1
-  basePrice *= randomFactor;
-  
-  // Round to nearest 10000
-  return Math.round(basePrice / 10000) * 10000;
+  // Apply multipliers and adjustments
+  let price = basePrice * (propertyTypeMultiplier[details.propertyType] || 1.0);
+
+  // Adjust for bedrooms, bathrooms, and parking
+  price += details.bedrooms * 500000;
+  price += details.bathrooms * 300000;
+  price += details.parking * 200000;
+
+  // Add premium for amenities
+  if (details.hasGarden) price *= 1.05;
+  if (details.hasSecurity) price *= 1.03;
+  if (details.hasPowerBackup) price *= 1.02;
+
+  // Add some randomness to simulate ML model variations (±5%)
+  const randomFactor = 0.95 + Math.random() * 0.1;
+  price = Math.round(price * randomFactor);
+
+  return price;
 };

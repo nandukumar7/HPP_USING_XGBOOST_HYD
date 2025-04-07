@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { makePrediction } from "@/lib/mockPrediction";
+import { makePrediction, PropertyDetails } from "@/lib/mockPrediction";
 
 // Form schema
 const formSchema = z.object({
@@ -56,7 +56,7 @@ const PredictionForm = ({ onPredictionResult }: PredictionFormProps) => {
     try {
       // In a real app, this would be an API call to your ML model
       setTimeout(() => {
-        const prediction = makePrediction(data);
+        const prediction = makePrediction(data as PropertyDetails);
         onPredictionResult(prediction);
         setIsLoading(false);
       }, 1500);
