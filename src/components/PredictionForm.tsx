@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
 import { makePrediction, PropertyDetails } from "@/lib/mockPrediction";
+import { toast } from "@/hooks/use-toast";
 
 // Form schema
 const formSchema = z.object({
@@ -54,14 +55,46 @@ const PredictionForm = ({ onPredictionResult }: PredictionFormProps) => {
     setIsLoading(true);
     
     try {
+      // Add console logs to debug
+      console.log("Form submitted with data:", data);
+      
       // In a real app, this would be an API call to your ML model
       setTimeout(() => {
-        const prediction = makePrediction(data as PropertyDetails);
-        onPredictionResult(prediction);
-        setIsLoading(false);
+        try {
+          const prediction = makePrediction(data as PropertyDetails);
+          console.log("Prediction result:", prediction);
+          
+          if (prediction) {
+            onPredictionResult(prediction);
+            toast({
+              title: "Prediction Generated",
+              description: "Your property valuation has been calculated successfully.",
+            });
+          } else {
+            toast({
+              title: "Prediction Failed",
+              description: "Unable to generate a prediction. Please try again.",
+              variant: "destructive",
+            });
+          }
+        } catch (error) {
+          console.error("Error during prediction calculation:", error);
+          toast({
+            title: "Prediction Error",
+            description: "There was an error calculating the prediction.",
+            variant: "destructive",
+          });
+        } finally {
+          setIsLoading(false);
+        }
       }, 1500);
     } catch (error) {
       console.error("Prediction failed:", error);
+      toast({
+        title: "Form Error",
+        description: "There was an error processing your form data.",
+        variant: "destructive",
+      });
       setIsLoading(false);
     }
   };

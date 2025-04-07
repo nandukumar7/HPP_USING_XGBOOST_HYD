@@ -14,6 +14,8 @@ export interface PropertyDetails {
 // Simple mock prediction function that calculates a property price
 // based on various factors (this would be replaced by an ML model in production)
 export const makePrediction = (details: PropertyDetails): number => {
+  console.log("Making prediction with details:", details);
+
   // Base price per sq ft based on location (in Hyderabad)
   const locationPrices: Record<string, number> = {
     "Banjara Hills": 12000,
@@ -28,6 +30,7 @@ export const makePrediction = (details: PropertyDetails): number => {
 
   // Base price based on location and area
   const basePrice = (locationPrices[details.location] || 5000) * details.area;
+  console.log("Base price calculation:", basePrice);
 
   // Adjustments based on property type
   const propertyTypeMultiplier: Record<string, number> = {
@@ -54,5 +57,6 @@ export const makePrediction = (details: PropertyDetails): number => {
   const randomFactor = 0.95 + Math.random() * 0.1;
   price = Math.round(price * randomFactor);
 
+  console.log("Final price calculation:", price);
   return price;
 };
