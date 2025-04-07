@@ -80,7 +80,7 @@ const Index = () => {
           </div>
         </section>
 
-        <section className="py-16" ref={formRef}>
+        <section className="py-16" ref={formRef} data-section="prediction-form">
           <div className="container mx-auto px-4">
             <div className="max-w-3xl mx-auto text-center mb-12">
               <h2 className="text-3xl font-bold mb-4">Predict Your Property Value</h2>

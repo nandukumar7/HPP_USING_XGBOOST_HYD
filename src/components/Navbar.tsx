@@ -4,6 +4,16 @@ import { Home, LineChart, HelpCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
+  const scrollToPredict = () => {
+    const formElement = document.querySelector('[data-section="prediction-form"]');
+    if (formElement) {
+      formElement.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b">
       <div className="container mx-auto px-4 h-16 flex items-center justify-between">
@@ -28,7 +38,7 @@ const Navbar = () => {
           <Button variant="ghost" size="icon">
             <HelpCircle className="h-5 w-5" />
           </Button>
-          <Button className="hidden md:flex">
+          <Button className="hidden md:flex" onClick={scrollToPredict}>
             <LineChart className="mr-2 h-4 w-4" />
             Get Prediction
           </Button>
