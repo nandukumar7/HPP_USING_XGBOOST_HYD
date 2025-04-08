@@ -3,7 +3,7 @@ import { useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { Building, Home, Map, Maximize, BedDouble, Bath, Car } from "lucide-react";
+import { Building, Home, Maximize, BedDouble, Bath, Car } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel } from "@/components/ui/form";
@@ -13,6 +13,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 import { makePrediction, PropertyDetails } from "@/lib/mockPrediction";
 import { toast } from "@/hooks/use-toast";
+import LocationSelector from "./LocationSelector";
 
 // Form schema
 const formSchema = z.object({
@@ -115,28 +116,10 @@ const PredictionForm = ({ onPredictionResult }: PredictionFormProps) => {
                 control={form.control}
                 name="location"
                 render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Location</FormLabel>
-                    <FormControl>
-                      <div className="relative">
-                        <Map className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <SelectTrigger className="pl-9">
-                            <SelectValue placeholder="Select location" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Gachibowli">Gachibowli</SelectItem>
-                            <SelectItem value="Hitech City">Hitech City</SelectItem>
-                            <SelectItem value="Kukatpally">Kukatpally</SelectItem>
-                            <SelectItem value="Banjara Hills">Banjara Hills</SelectItem>
-                            <SelectItem value="Madhapur">Madhapur</SelectItem>
-                            <SelectItem value="Kondapur">Kondapur</SelectItem>
-                            <SelectItem value="Miyapur">Miyapur</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                    </FormControl>
-                  </FormItem>
+                  <LocationSelector 
+                    value={field.value}
+                    onChange={field.onChange}
+                  />
                 )}
               />
 
@@ -249,6 +232,7 @@ const PredictionForm = ({ onPredictionResult }: PredictionFormProps) => {
                   </FormItem>
                 )}
               />
+              
               <FormField
                 control={form.control}
                 name="hasSecurity"
@@ -266,6 +250,7 @@ const PredictionForm = ({ onPredictionResult }: PredictionFormProps) => {
                   </FormItem>
                 )}
               />
+              
               <FormField
                 control={form.control}
                 name="hasPowerBackup"
