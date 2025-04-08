@@ -1,10 +1,12 @@
 
 import { useEffect, useState } from "react";
-import { LineChart, TrendingUp, Home, Info } from "lucide-react";
+import { LineChart, TrendingUp, Home, Info, Save } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 interface ResultDisplayProps {
   predictedPrice: number | null;
@@ -14,6 +16,7 @@ interface ResultDisplayProps {
 const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
   const [progress, setProgress] = useState(0);
   const [showResults, setShowResults] = useState(false);
+  const { isAuthenticated } = useAuth();
 
   // Format price in Indian format (lakhs, crores)
   const formatIndianPrice = (price: number) => {
@@ -24,6 +27,39 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
     } else {
       return `₹${price.toLocaleString('en-IN')}`;
     }
+  };
+
+  const handleSaveResult = () => {
+    if (!isAuthenticated) {
+      toast.error("Please login to save predictions", {
+        description: "You need to be logged in to save your prediction results.",
+        duration: 5000,
+      });
+      return;
+    }
+
+    // Get existing saved predictions from localStorage or initialize empty array
+    const savedPredictions = JSON.parse(localStorage.getItem("savedPredictions") || "[]");
+    
+    // Create a new prediction record
+    const newPrediction = {
+      id: Date.now(),
+      price: predictedPrice,
+      date: new Date().toISOString(),
+      formattedPrice: formatIndianPrice(predictedPrice as number),
+    };
+    
+    // Add new prediction to the beginning of the array
+    savedPredictions.unshift(newPrediction);
+    
+    // Save back to localStorage
+    localStorage.setItem("savedPredictions", JSON.stringify(savedPredictions));
+    
+    // Show success notification
+    toast.success("Prediction saved successfully", {
+      description: "You can view your saved predictions in your profile.",
+      duration: 3000,
+    });
   };
 
   useEffect(() => {
@@ -121,17 +157,19 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
                   <span>Market trend: <span className="font-medium text-green-600">+5.3% growth</span> expected in next 6 months</span>
                 </li>
                 <li className="flex items-center">
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <div className="flex items-center cursor-help">
-                        <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                        <span>Most valuable factors: <span className="font-medium">Location, amenities</span></span>
-                      </div>
-                    </TooltipTrigger>
-                    <TooltipContent>
-                      <p className="w-[200px] text-xs">These factors contributed most significantly to your property's valuation.</p>
-                    </TooltipContent>
-                  </Tooltip>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <div className="flex items-center cursor-help">
+                          <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
+                          <span>Most valuable factors: <span className="font-medium">Location, amenities</span></span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p className="w-[200px] text-xs">These factors contributed most significantly to your property's valuation.</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </li>
               </ul>
             </div>
@@ -141,8 +179,8 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
                 <TrendingUp className="mr-2 h-4 w-4" />
                 New Prediction
               </Button>
-              <Button variant="default">
-                <Home className="mr-2 h-4 w-4" />
+              <Button variant="default" onClick={handleSaveResult}>
+                <Save className="mr-2 h-4 w-4" />
                 Save Result
               </Button>
             </div>
