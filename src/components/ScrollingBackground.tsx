@@ -42,7 +42,7 @@ const ScrollingBackground = () => {
   };
 
   return (
-    <div className="fixed inset-0 -z-10 overflow-hidden">
+    <div className="fixed inset-0 -z-50 overflow-hidden">
       {bgImages.map((image, index) => (
         <div 
           key={index}
@@ -56,7 +56,7 @@ const ScrollingBackground = () => {
       ))}
       {/* Overlay to ensure content remains readable */}
       <div 
-        className="absolute inset-0 bg-gradient-to-b from-white/70 to-white/60 backdrop-blur-sm"
+        className="absolute inset-0 bg-gradient-to-b from-white/50 to-white/40 backdrop-blur-sm"
         style={{ transform: `translateY(${scrollPosition * 0.1}px)` }}
       />
     </div>
