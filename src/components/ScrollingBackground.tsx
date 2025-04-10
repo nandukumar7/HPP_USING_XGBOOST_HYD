@@ -56,7 +56,7 @@ const ScrollingBackground = () => {
       ))}
       {/* Overlay to ensure content remains readable */}
       <div 
-        className="absolute inset-0 bg-gradient-to-b from-white/90 to-white/80 backdrop-blur-sm"
+        className="absolute inset-0 bg-gradient-to-b from-white/70 to-white/60 backdrop-blur-sm"
         style={{ transform: `translateY(${scrollPosition * 0.1}px)` }}
       />
     </div>
