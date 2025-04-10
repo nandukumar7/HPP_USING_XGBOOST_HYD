@@ -16,7 +16,7 @@ interface ResultDisplayProps {
 const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
   const [progress, setProgress] = useState(0);
   const [showResults, setShowResults] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
 
   // Format price in Indian format (lakhs, crores)
   const formatIndianPrice = (price: number) => {
@@ -30,7 +30,7 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
   };
 
   const handleSaveResult = () => {
-    if (!isAuthenticated) {
+    if (!isAuthenticated || !user) {
       toast.error("Please login to save predictions", {
         description: "You need to be logged in to save your prediction results.",
         duration: 5000,
@@ -38,8 +38,9 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
       return;
     }
 
-    // Get existing saved predictions from localStorage or initialize empty array
-    const savedPredictions = JSON.parse(localStorage.getItem("savedPredictions") || "[]");
+    // Get existing saved predictions from localStorage using user ID
+    const storageKey = `savedPredictions_${user.id}`;
+    const savedPredictions = JSON.parse(localStorage.getItem(storageKey) || "[]");
     
     // Create a new prediction record
     const newPrediction = {
@@ -52,8 +53,8 @@ const ResultDisplay = ({ predictedPrice, onReset }: ResultDisplayProps) => {
     // Add new prediction to the beginning of the array
     savedPredictions.unshift(newPrediction);
     
-    // Save back to localStorage
-    localStorage.setItem("savedPredictions", JSON.stringify(savedPredictions));
+    // Save back to localStorage with user ID
+    localStorage.setItem(storageKey, JSON.stringify(savedPredictions));
     
     // Show success notification
     toast.success("Prediction saved successfully", {

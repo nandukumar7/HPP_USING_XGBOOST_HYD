@@ -21,21 +21,24 @@ const Index = () => {
   const [predictedPrice, setPredictedPrice] = useState<number | null>(null);
   const [savedPredictions, setSavedPredictions] = useState<SavedPrediction[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const formRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && user) {
       setIsLoading(true);
-      const storedPredictions = localStorage.getItem("savedPredictions");
+      const storageKey = `savedPredictions_${user.id}`;
+      const storedPredictions = localStorage.getItem(storageKey);
       if (storedPredictions) {
         setSavedPredictions(JSON.parse(storedPredictions));
+      } else {
+        setSavedPredictions([]);
       }
       setIsLoading(false);
     } else {
       setSavedPredictions([]);
     }
-  }, [isAuthenticated, predictedPrice]); // Re-fetch when predictedPrice changes (after save)
+  }, [isAuthenticated, user, predictedPrice]); // Re-fetch when predictedPrice changes (after save)
 
   const handlePredictionResult = (price: number) => {
     setPredictedPrice(price);
@@ -66,7 +69,7 @@ const Index = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white bg-fixed">
       <Navbar />
       <main className="flex-grow pt-16">
         <Hero scrollToPredict={scrollToPredict} />
@@ -92,7 +95,7 @@ const Index = () => {
         </section>
 
         {isAuthenticated && (
-          <section className="py-16 bg-blue-50">
+          <section className="py-16 bg-blue-50/70 backdrop-blur-sm">
             <div className="container mx-auto px-4">
               <div className="max-w-3xl mx-auto text-center mb-12">
                 <h2 className="text-3xl font-bold mb-4">Your Saved Predictions</h2>
@@ -118,7 +121,7 @@ const Index = () => {
               ) : savedPredictions.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
                   {savedPredictions.map((prediction) => (
-                    <Card key={prediction.id} className="hover:shadow-md transition-shadow">
+                    <Card key={prediction.id} className="hover:shadow-md transition-shadow backdrop-blur-sm bg-white/80">
                       <CardHeader className="pb-2">
                         <CardTitle className="text-xl">{prediction.formattedPrice}</CardTitle>
                       </CardHeader>

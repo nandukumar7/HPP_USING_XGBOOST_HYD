@@ -4,6 +4,7 @@ import React, { createContext, useContext, useState, useEffect } from "react";
 type User = {
   name?: string;
   email: string;
+  id: string; // Adding user ID to uniquely identify users
 };
 
 type AuthContextType = {
@@ -35,15 +36,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const login = (userData: User) => {
-    setUser(userData);
+    // Ensure user has an ID
+    const userWithId = {
+      ...userData,
+      id: userData.id || `user_${Date.now()}` // Generate an ID if not provided
+    };
+    
+    setUser(userWithId);
     setIsAuthenticated(true);
-    localStorage.setItem("user", JSON.stringify(userData));
+    localStorage.setItem("user", JSON.stringify(userWithId));
   };
 
   const logout = () => {
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem("user");
+    // Also clear user-specific saved predictions
+    localStorage.removeItem(`savedPredictions_${user?.id}`);
   };
 
   return (

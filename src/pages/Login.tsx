@@ -47,8 +47,14 @@ const Login = () => {
       // Simulate login authentication - in a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // For demo purposes, we'll accept any valid form input
-      login({ email: data.email });
+      // For demo purposes, generate a unique user ID
+      const userId = `user_${Buffer.from(data.email).toString('base64')}`;
+      
+      // Login with user data including ID
+      login({ 
+        email: data.email,
+        id: userId 
+      });
       
       toast({
         title: "Login successful!",

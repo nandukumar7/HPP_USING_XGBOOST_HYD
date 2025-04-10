@@ -31,12 +31,17 @@ const Dashboard = () => {
     }
 
     setIsLoading(true);
-    const storedPredictions = localStorage.getItem("savedPredictions");
-    if (storedPredictions) {
-      setSavedPredictions(JSON.parse(storedPredictions));
+    if (user) {
+      const storageKey = `savedPredictions_${user.id}`;
+      const storedPredictions = localStorage.getItem(storageKey);
+      if (storedPredictions) {
+        setSavedPredictions(JSON.parse(storedPredictions));
+      } else {
+        setSavedPredictions([]);
+      }
     }
     setIsLoading(false);
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated, navigate, user]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -48,15 +53,21 @@ const Dashboard = () => {
   };
 
   const handleDeletePrediction = (id: number) => {
+    if (!user) return;
+    
+    const storageKey = `savedPredictions_${user.id}`;
     const updatedPredictions = savedPredictions.filter(prediction => prediction.id !== id);
     setSavedPredictions(updatedPredictions);
-    localStorage.setItem("savedPredictions", JSON.stringify(updatedPredictions));
+    localStorage.setItem(storageKey, JSON.stringify(updatedPredictions));
     toast.success("Prediction deleted successfully");
   };
 
   const handleDeleteAllPredictions = () => {
+    if (!user) return;
+    
+    const storageKey = `savedPredictions_${user.id}`;
     setSavedPredictions([]);
-    localStorage.removeItem("savedPredictions");
+    localStorage.removeItem(storageKey);
     toast.success("All predictions deleted successfully");
   };
 
@@ -65,7 +76,7 @@ const Dashboard = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gradient-to-b from-blue-50 to-white bg-fixed">
       <Navbar />
       <main className="flex-grow pt-16 pb-16">
         <div className="container mx-auto px-4 py-8">
@@ -91,7 +102,7 @@ const Dashboard = () => {
             </TabsList>
 
             <TabsContent value="predictions">
-              <Card>
+              <Card className="backdrop-blur-sm bg-white/80">
                 <CardHeader>
                   <CardTitle className="flex justify-between items-center">
                     <span>Your Saved Predictions</span>
@@ -171,7 +182,7 @@ const Dashboard = () => {
             </TabsContent>
 
             <TabsContent value="profile">
-              <Card>
+              <Card className="backdrop-blur-sm bg-white/80">
                 <CardHeader>
                   <CardTitle>Profile Information</CardTitle>
                   <CardDescription>
@@ -206,7 +217,7 @@ const Dashboard = () => {
             </TabsContent>
 
             <TabsContent value="settings">
-              <Card>
+              <Card className="backdrop-blur-sm bg-white/80">
                 <CardHeader>
                   <CardTitle>Account Settings</CardTitle>
                   <CardDescription>
