@@ -54,8 +54,15 @@ const Register = () => {
       // Simulate registration - in a real app, this would be an API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Register and log in the user
-      login({ name: data.name, email: data.email });
+      // Generate a unique user ID based on email
+      const userId = `user_${Buffer.from(data.email).toString('base64')}`;
+      
+      // Register and log in the user with ID
+      login({ 
+        name: data.name, 
+        email: data.email,
+        id: userId
+      });
       
       toast({
         title: "Registration successful!",

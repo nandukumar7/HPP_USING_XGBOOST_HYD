@@ -48,11 +48,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = () => {
+    // Clear user-specific saved predictions
+    if (user?.id) {
+      localStorage.removeItem(`savedPredictions_${user.id}`);
+    }
+    
     setUser(null);
     setIsAuthenticated(false);
     localStorage.removeItem("user");
-    // Also clear user-specific saved predictions
-    localStorage.removeItem(`savedPredictions_${user?.id}`);
   };
 
   return (
